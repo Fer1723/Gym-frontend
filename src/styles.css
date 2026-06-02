@@ -1,0 +1,124 @@
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+/* =========================================
+   THE FACTORY GYM - TEMA PREMIUM HARDCORE
+========================================= */
+/* =========================================
+   FUENTES LOCALES (100% OFFLINE)
+========================================= */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('assets/fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('assets/fonts/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('assets/fonts/Montserrat-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* =========================================
+   RESET RESPONSIVO Y ESTRUCTURA BASE
+========================================= */
+* {
+  box-sizing: border-box; /* Crucial: Evita que el padding rompa los anchos (%) */
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100vh; /* Obliga a que el fondo abarque toda la ventana, sin importar el monitor */
+  overflow-x: hidden; /* Evita el molesto scroll horizontal roto */
+}
+/* 1. Fondo Abismal con Destellos (El lienzo negro) */
+body {
+  background-color: #0a0a0a !important; /* Un negro súper profundo */
+  /* Un brillo sutil de fondo: Amarillo arriba, Morado abajo */
+  background-image: radial-gradient(circle at top right, rgba(255, 193, 7, 0.05), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(111, 66, 193, 0.05), transparent 40%) !important;
+  color: #ffffff !important;
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+/* 2. Scrollbar Personalizado (Detalle de app premium) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #ffc107;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d39e00;
+}
+
+/* 3. Tarjetas estilo "Fierro" (Rudas pero modernas) */
+.card {
+  background-color: rgba(20, 20, 20, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 3px solid #ffc107 !important; /* La raya amarilla distintiva abajo */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 12px;
+}
+
+/* 4. Tipografía de Impacto */
+h1, h2, h3, h4, th {
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 5. Clases de utilería para hacer resaltar el amarillo */
+.text-gym-yellow {
+  color: #ffc107 !important;
+  text-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+}
+.slogan-gym {
+  font-size: 0.8rem;
+  color: #666;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* 6. Botones (Con efecto fantasma al pasar el mouse) */
+.btn-gym-purple {
+  background-color: #6f42c1;
+  color: white;
+  border: 1px solid #6f42c1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 700;
+}
+.btn-gym-purple:hover {
+  background-color: transparent; /* Se vacía y solo queda el borde */
+  color: #6f42c1;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(111, 66, 193, 0.4);
+}
+
+.btn-gym-yellow {
+  background-color: #ffc107;
+  color: #000;
+  border: 1px solid #ffc107;
+  font-weight: 900;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-gym-yellow:hover {
+  background-color: transparent; /* Se vacía y solo queda el borde */
+  color: #ffc107;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}

@@ -1,0 +1,96 @@
+/* =========================================
+   ANIMACIÓN DE ENTRADA (EFECTO PREMIUM)
+========================================= */
+.card {
+  /* La tarjeta aparece escalando suavemente desde el fondo */
+  animation: zoomIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* El toque de "The Factory Gym" en la base de la tarjeta */
+  border-bottom: 4px solid #ffc107 !important; 
+}
+
+@keyframes zoomIn {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* =========================================
+   EFECTOS DEL LOGO
+========================================= */
+img {
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Al pasar el mouse, el logo crece un poco y brilla más */
+img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 25px rgba(255, 193, 7, 0.6)) !important;
+}
+
+/* =========================================
+   INPUTS (ADIÓS AL AZUL BOOTSTRAP)
+========================================= */
+.form-control {
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+}
+
+/* Cuando das clic para escribir, brilla en amarillo corporativo */
+.form-control:focus {
+  background-color: #111 !important;
+  color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.2) !important;
+  outline: none;
+}
+
+/* Cambiamos el color del texto falso (placeholder) para que no sea tan brillante */
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================
+   BOTÓN DE ENTRADA
+========================================= */
+.btn-warning {
+  transition: all 0.3s ease;
+  background-color: #ffc107;
+  border: 1px solid #ffc107;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Efecto fantasma (Ghost Button) al hacer hover */
+.btn-warning:hover {
+  background-color: transparent !important;
+  color: #ffc107 !important;
+  box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Efecto de presión física al dar clic */
+.btn-warning:active {
+  transform: scale(0.96);
+}
+
+/* =========================================
+   ADAPTACIÓN PARA PANTALLAS PEQUEÑAS
+========================================= */
+@media (max-width: 480px) {
+  /* Si encogen mucho la ventana, evitamos que la tarjeta toque los bordes */
+  .card {
+    margin: 1rem;
+  }
+  
+  /* Reducimos un poco el padding interno para ganar espacio */
+  .card-body {
+    padding: 2rem !important;
+  }
+  
+  /* Achicamos ligeramente el logo y el texto */
+  img {
+    max-width: 140px !important;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+}

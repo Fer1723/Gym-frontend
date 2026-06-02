@@ -1,0 +1,111 @@
+<div class="container mt-4 text-white">
+  <h2 class="mb-4 text-warning"><i class="bi bi-cash-coin"></i> Corte de Caja (Turno Actual)</h2>
+
+  <div class="row" *ngIf="corte">
+
+    <div class="col-md-6 mb-4">
+      <div class="card bg-dark border-secondary">
+        <div class="card-header border-secondary fw-bold text-info">
+          <i class="bi bi-bar-chart-fill"></i> Origen de Ingresos
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item bg-dark text-white d-flex justify-content-between">
+            <span>Membresías e Inscripciones:</span>
+            <strong>{{ corte.totalMembresias | currency:'MXN' }}</strong>
+          </li>
+          <li class="list-group-item bg-dark text-white d-flex justify-content-between">
+            <span>Visitas Express:</span>
+            <strong>{{ corte.totalVisitas | currency:'MXN' }}</strong>
+          </li>
+          <li class="list-group-item bg-dark text-white d-flex justify-content-between">
+            <span>Tienda:</span>
+            <strong>{{ corte.totalTienda | currency:'MXN' }}</strong>
+          </li>
+        </ul>
+        <div class="card-footer border-secondary text-end fs-5 text-success">
+          Total General: <strong>{{ corte.granTotal | currency:'MXN' }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      
+      <div class="card bg-dark border-secondary mb-3">
+        <div class="card-header border-secondary fw-bold text-warning">
+          <i class="bi bi-wallet2"></i> Métodos de Pago
+        </div>
+        <div class="card-body p-3">
+          <div class="text-white d-flex justify-content-between mb-2">
+            <span>Transferencias:</span>
+            <strong>{{ (corte.totalTransferencia || 0) | currency:'MXN' }}</strong>
+          </div>
+
+          <div class="text-white d-flex justify-content-between mb-2">
+            <span>Tarjetas (TDC/TDD):</span>
+            <strong>{{ (corte.totalTarjeta || 0) | currency:'MXN' }}</strong>
+          </div>
+          <hr class="border-secondary">
+          <h5 class="d-flex justify-content-between text-white">
+            <span>Efectivo Esperado en Cajón:</span>
+            <span class="text-warning">{{ corte.totalEfectivo | currency:'MXN' }}</span>
+          </h5>
+        </div>
+      </div>
+
+      <div class="card bg-dark border-secondary">
+        <div class="card-body">
+          
+          <div *ngIf="esRecepcion">
+            <label class="form-label text-info fw-bold">¿Cuánto efectivo físico contaste?</label>
+            
+            <div class="input-group mb-3">
+              <span class="input-group-text bg-secondary border-secondary text-white">$</span>
+              <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="efectivoFisico"
+                placeholder="Ingresa el efectivo real...">
+            </div>
+
+            <div *ngIf="efectivoFisico !== null" class="mb-3">
+              <div class="alert py-2 mb-0"
+                [ngClass]="{'alert-success': diferenciaEfectivo === 0, 'alert-danger': diferenciaEfectivo < 0, 'alert-warning': diferenciaEfectivo > 0}">
+                <span *ngIf="diferenciaEfectivo === 0"><i class="bi bi-check-circle-fill"></i> ¡Caja Cuadrada Perfectamente!</span>
+                <span *ngIf="diferenciaEfectivo < 0"><i class="bi bi-exclamation-triangle-fill"></i> Faltante en caja: {{ diferenciaEfectivo | currency:'MXN' }}</span>
+                <span *ngIf="diferenciaEfectivo > 0"><i class="bi bi-info-circle-fill"></i> Sobrante en caja: +{{ diferenciaEfectivo | currency:'MXN' }}</span>
+              </div>
+            </div>
+
+            <button class="btn btn-danger w-100 fw-bold" (click)="cerrarMiTurno()">
+              <i class="fa-solid fa-lock me-2"></i> Cerrar Turno y Caja
+            </button>
+          </div>
+
+          <div *ngIf="esAdmin">
+            <h5 class="text-success mb-3"><i class="bi bi-safe2"></i> Cierre General y Retiro</h5>
+            
+            <label class="form-label text-white">Efectivo total físico (Todo el día):</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text bg-secondary text-white border-secondary">$</span>
+              <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="efectivoFisico" placeholder="Billetes y monedas...">
+            </div>
+
+            <label class="form-label text-warning mt-2">¿Cuánto dinero te vas a llevar (Retiro)?</label>
+            <div class="input-group mb-3">
+              <span class="input-group-text bg-secondary text-white border-secondary">$</span>
+              <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="retiroDueno" placeholder="Tus ganancias...">
+            </div>
+
+            <div class="alert alert-info py-2" *ngIf="efectivoFisico !== null && retiroDueno !== null">
+              <i class="bi bi-box-arrow-in-right text-dark"></i> <span class="text-dark">Dinero que dejas en caja para mañana: </span>
+              <strong class="text-dark">{{ fondoSiguienteDia | currency:'MXN' }}</strong>
+            </div>
+
+            <button class="btn btn-success w-100 fw-bold" (click)="cerrarDiaAdmin()">
+              <i class="fa-solid fa-vault me-2"></i> Confirmar Cierre de Día
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

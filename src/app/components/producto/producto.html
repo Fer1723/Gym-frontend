@@ -1,0 +1,77 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-10">
+    <div class="card bg-dark border-secondary shadow-lg mt-4">
+      
+      <div class="card-header bg-black bg-opacity-25 text-white d-flex justify-content-between align-items-center border-bottom border-secondary py-3">
+        <h5 class="mb-0"><i class="bi bi-box-seam text-warning me-2"></i>Registrar Nuevo Producto</h5>
+        <button class="btn btn-sm btn-outline-light" routerLink="/tienda">
+          <i class="bi bi-arrow-left me-1"></i> Volver a la Tienda
+        </button>
+      </div>
+      
+      <div class="card-body p-4">
+        <form [formGroup]="productoForm" (ngSubmit)="guardar()">
+          
+          <div class="mb-4">
+            <label class="form-label text-secondary fw-bold">Nombre del Producto</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-secondary text-info"><i class="bi bi-tag"></i></span>
+              <input type="text" class="form-control bg-dark text-white border-secondary shadow-none" formControlName="nombre" placeholder="Ej. Proteína Whey 2kg, Agua 1L...">
+            </div>
+            <small class="text-danger" *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
+              * El nombre es obligatorio (mínimo 3 letras).
+            </small>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label class="form-label text-secondary fw-bold">Precio de Venta</label>
+              <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-success"><i class="bi bi-currency-dollar"></i></span>
+                <input type="number" class="form-control bg-dark text-white border-secondary shadow-none" formControlName="precioVenta" placeholder="0.00">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label text-secondary fw-bold">Stock Inicial (Cantidad)</label>
+              <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-warning"><i class="bi bi-boxes"></i></span>
+                <input type="number" class="form-control bg-dark text-white border-secondary shadow-none" formControlName="stockActual" placeholder="Ej. 20">
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-5">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label class="form-label text-secondary fw-bold">Alerta de Stock Mínimo</label>
+              <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-danger"><i class="bi bi-exclamation-triangle"></i></span>
+                <input type="number" class="form-control bg-dark text-white border-secondary shadow-none" formControlName="stockMinimo" placeholder="Ej. 5">
+              </div>
+              <small class="text-secondary">Te avisaremos cuando queden esta cantidad o menos.</small>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label text-secondary fw-bold">Categoría</label>
+              <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-white"><i class="bi bi-folder2-open"></i></span>
+                <select class="form-select bg-dark text-white border-secondary shadow-none" formControlName="categoria">
+                  <option value="General">General</option>
+                  <option value="Bebidas">Bebidas</option>
+                  <option value="Suplementos">Suplementos</option>
+                  <option value="Snacks">Snacks</option>
+                  <option value="Accesorios">Accesorios deportivos</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-warning w-100 py-3 fs-5 fw-bold shadow-sm" [disabled]="productoForm.invalid">
+            <i class="bi bi-cloud-arrow-up-fill me-2"></i> Guardar Producto en Inventario
+          </button>
+          
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

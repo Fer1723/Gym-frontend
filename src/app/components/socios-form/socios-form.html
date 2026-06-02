@@ -1,0 +1,191 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Registrar Nuevo Socio</h4>
+          <button class="btn btn-sm btn-outline-light" routerLink="/socios">
+            <i class="bi bi-arrow-left"></i> Volver
+          </button>
+        </div>
+
+        <div class="card-body p-4 bg-dark">
+          <form [formGroup]="socioForm" (ngSubmit)="guardar()">
+
+            <div class="card bg-black border-warning mb-4">
+              <div class="card-body">
+
+                <div class="d-flex align-items-center">
+                  <div class="form-check form-switch mb-0" style="min-height: auto;">
+                    <input class="form-check-input shadow-none m-0" type="checkbox" id="switchMigracion"
+                      style="width: 3rem; height: 1.5rem; cursor: pointer;" [(ngModel)]="modoMigracion"
+                      [ngModelOptions]="{standalone: true}" (change)="alCargarMigracion()">
+                  </div>
+                  <label class="text-warning fw-bold mb-0 ms-3" for="switchMigracion"
+                    style="cursor: pointer; font-size: 1.1rem; padding-top: 2px;">
+                    <i class="bi bi-database-down me-1"></i> Migrar socio del sistema anterior
+                  </label>
+                </div>
+
+                @if (modoMigracion) {
+                <hr class="border-warning opacity-25 my-3">
+                <div class="alert alert-warning bg-transparent border-warning text-warning mb-0 p-3">
+                  <label class="form-label fw-bold"><i class="bi bi-calendar-event me-1"></i> ¿Qué día vence su plan
+                    actual?</label>
+                  <input type="date" class="form-control bg-dark text-white border-warning shadow-none"
+                    [(ngModel)]="fechaVencimientoMigracion" [ngModelOptions]="{standalone: true}">
+                  <small class="d-block mt-2 opacity-75">
+                    <i class="bi bi-info-circle me-1"></i> Al guardar, <b>NO</b> se cobrará inscripción ni mensualidad.
+                  </small>
+                </div>
+                }
+
+              </div>
+            </div>
+
+            <div class="card bg-dark border-secondary mb-4">
+              <div class="card-header bg-secondary text-white py-2">
+                <h6 class="mb-0"><i class="bi bi-camera-fill me-2"></i> Fotografía del Socio</h6>
+              </div>
+              <div class="card-body text-center d-flex flex-column align-items-center">
+
+                <video #videoElement autoplay class="rounded mb-3 shadow"
+                  style="width: 250px; height: 250px; object-fit: cover; border: 3px solid #6f42c1;"
+                  [hidden]="fotoCapturada || !camaraEncendida"></video>
+
+                <img [src]="fotoCapturada" class="rounded mb-3 shadow"
+                  style="width: 250px; height: 250px; object-fit: cover; border: 3px solid #198754;"
+                  *ngIf="fotoCapturada">
+
+                <canvas #canvasElement style="display: none;"></canvas>
+
+                <div class="mt-2">
+                  <button type="button" class="btn btn-outline-info" (click)="iniciarCamara()"
+                    *ngIf="!camaraEncendida && !fotoCapturada">
+                    <i class="bi bi-webcam me-1"></i> Encender Cámara
+                  </button>
+
+                  <button type="button" class="btn btn-gym-yellow" (click)="tomarFoto()"
+                    *ngIf="camaraEncendida && !fotoCapturada">
+                    <i class="bi bi-record-circle text-danger me-1"></i> Capturar Foto
+                  </button>
+
+                  <button type="button" class="btn btn-outline-danger" (click)="borrarFoto()" *ngIf="fotoCapturada">
+                    <i class="bi bi-trash me-1"></i> Tomar de nuevo
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6 text-white">
+                <label class="form-label fw-bold">Nombre(s)</label>
+                <input type="text" class="form-control" formControlName="nombre"
+                  [class.is-invalid]="socioForm.get('nombre')?.invalid && socioForm.get('nombre')?.touched">
+                <div class="invalid-feedback">El nombre es obligatorio.</div>
+              </div>
+
+              <div class="col-md-6 mt-3 mt-md-0 text-white">
+                <label class="form-label fw-bold">Apellido(s)</label>
+                <input type="text" class="form-control" formControlName="apellido"
+                  [class.is-invalid]="socioForm.get('apellido')?.invalid && socioForm.get('apellido')?.touched">
+                <div class="invalid-feedback">El apellido es obligatorio.</div>
+              </div>
+            </div>
+
+            <div class="mb-4 text-white">
+              <label class="form-label fw-bold">Teléfono Celular (10 dígitos)</label>
+              <input type="text" class="form-control" formControlName="telefono" placeholder="Ej. 5511223344"
+                [class.is-invalid]="socioForm.get('telefono')?.invalid && socioForm.get('telefono')?.touched">
+              <div class="invalid-feedback">
+                @if (socioForm.get('telefono')?.hasError('required')) {
+                El teléfono es obligatorio.
+                } @else if (socioForm.get('telefono')?.hasError('pattern')) {
+                El teléfono debe tener exactamente 10 números.
+                }
+              </div>
+            </div>
+
+            <div class="mb-3 text-white">
+              <label for="idMembresia" class="form-label text-light">Plan de Suscripción</label>
+              <select id="idMembresia" class="form-select bg-dark text-light border-secondary"
+                formControlName="idMembresia">
+                <option value="" disabled selected>Selecciona un plan (Opcional)</option>
+                @for (plan of planesDisponibles; track plan.idMembresia) {
+                <option [value]="plan.idMembresia">
+                  {{ plan.nombre }} - ${{ plan.precio }}
+                </option>
+                }
+              </select>
+              @if (socioForm.get('idMembresia')?.invalid && socioForm.get('idMembresia')?.touched) {
+              <small class="text-danger">El plan es requerido.</small>
+              }
+              <div class="mb-4" *ngIf="socioForm.get('idMembresia')?.value">
+                <label class="form-label text-secondary fw-bold">Método de Pago</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-dark border-secondary text-success"><i
+                      class="bi bi-wallet2"></i></span>
+                  <select class="form-select bg-dark text-white border-secondary shadow-none"
+                    formControlName="metodoPago">
+                    <option value="Efectivo">💵 Efectivo</option>
+                    <option value="Tarjeta">💳 Tarjeta (TDC/TDD)</option>
+                    <option value="Transferencia">📱 Transferencia</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="card bg-black border-secondary mt-4 mb-2" [class.opacity-50]="!permitirPromo">
+              <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-0 text-white" [ngClass]="permitirPromo ? '' : 'text-muted'">
+                    <i class="bi bi-star-fill text-warning me-2"></i>Renovación a Tiempo
+                  </h6>
+                  <small class="text-secondary">Aplica precio de promoción</small>
+                </div>
+                <div class="form-check form-switch fs-4 mb-0">
+                  <input class="form-check-input border-secondary" type="checkbox" role="switch" id="switchPromo"
+                    [(ngModel)]="aplicarPromocion" [ngModelOptions]="{standalone: true}" (change)="recalcularTotal()"
+                    [disabled]="!permitirPromo">
+                </div>
+              </div>
+            </div>
+
+            <div class="card bg-black border-secondary mb-4 mt-2" [class.opacity-50]="modoMigracion">
+              <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-0 text-white"><i class="bi bi-clipboard-check text-primary me-2"></i>Inscripción Nueva
+                  </h6>
+                  <small class="text-secondary">Aplica recargo único de $100.00</small>
+                </div>
+                <div class="form-check form-switch fs-4 mb-0">
+                  <input class="form-check-input border-secondary" type="checkbox" role="switch" id="switchInscripcion"
+                    [(ngModel)]="aplicarInscripcion" [ngModelOptions]="{standalone: true}" (change)="recalcularTotal()"
+                    [disabled]="modoMigracion">
+                </div>
+              </div>
+            </div>
+
+            <div class="text-end mb-4 px-2">
+              @if (descuentoAplicado > 0) {
+              <div class="text-success small mb-1 fw-bold">
+                <i class="bi bi-tag-fill me-1"></i>Ahorro de promo: -${{ descuentoAplicado }}
+              </div>
+              }
+              <span class="text-secondary fs-5 me-3">Total a Cobrar:</span>
+              <span class="text-warning display-5 fw-bold">${{ modoMigracion ? '0.00' : (totalACobrar | number:'1.2-2')
+                }}</span>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-success btn-lg py-3 fw-bold fs-5">
+                <i class="bi bi-save me-2"></i>{{ modoMigracion ? 'Migrar Socio' : 'Guardar y Cobrar' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

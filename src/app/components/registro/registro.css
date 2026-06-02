@@ -1,0 +1,96 @@
+/* =========================================
+   ANIMACIÓN DE LA TARJETA DE SEGURIDAD
+========================================= */
+.card {
+  /* Aparece cayendo suavemente desde arriba */
+  animation: caerSeguro 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  border-radius: 12px;
+  /* Borde superior para indicar que es un módulo de sistema/seguridad */
+  border-top: 4px solid #ffc107 !important; 
+}
+
+@keyframes caerSeguro {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   INPUTS ESTÁNDAR Y SELECTS
+========================================= */
+.form-control, .form-select {
+  transition: all 0.3s ease;
+  font-size: 1.05rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Brillo amarillo institucional al escribir */
+.form-control:focus:not(.border-danger), .form-select:focus {
+  background-color: #111 !important;
+  color: #fff !important;
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.2) !important;
+  outline: none;
+}
+
+/* Opciones del selector en tema oscuro */
+.form-select option {
+  background-color: #222;
+  color: #fff;
+}
+
+/* =========================================
+   LA LLAVE MAESTRA (EFECTO ALERTA ROJA)
+========================================= */
+/* Cuando dan clic en la llave maestra, el sistema brilla en rojo */
+.border-danger:focus {
+  background-color: #1a0505 !important; /* Fondo ligeramente rojizo */
+  color: #fff !important;
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 20px rgba(220, 53, 69, 0.5) !important;
+  outline: none;
+}
+
+/* Animación extra por si no tienes cargado Animate.css en todo el proyecto */
+.animate__animated {
+  animation: alertaRoja 0.4s ease-out forwards;
+}
+
+@keyframes alertaRoja {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* =========================================
+   BOTÓN DE ACCIÓN
+========================================= */
+.btn-warning {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+}
+
+/* Efecto fantasma que ya es insignia en tu app */
+.btn-warning:hover {
+  background-color: transparent !important;
+  color: #ffc107 !important;
+  border: 1px solid #ffc107;
+  box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+  transform: translateY(-3px);
+}
+
+.btn-warning:active {
+  transform: scale(0.96);
+}
+
+/* =========================================
+   ADAPTACIÓN MÓVIL
+========================================= */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+}

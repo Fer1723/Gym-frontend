@@ -1,0 +1,72 @@
+<nav *ngIf="mostrarMenu" class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #1a1a1a; border-bottom: 2px solid #6f42c1;">
+  <div class="container">
+    
+    <a class="navbar-brand fw-bold d-flex align-items-center" style="cursor: pointer;">
+      <img src="assets/Logo.png" alt="The Factory Gym" class="me-2" 
+           style="height: 45px; filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.4)); transition: transform 0.3s ease;"
+           onmouseover="this.style.transform='scale(1.05)'"
+           onmouseout="this.style.transform='scale(1)'">
+      
+      <span class="text-white">Factory</span><span style="color: #6f42c1;">Gym</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto fw-bold align-items-center">
+        
+        <li class="nav-item" *ngIf="esAdmin">
+          <a class="nav-link text-white me-3" routerLink="/dashboard" routerLinkActive="text-warning" style="cursor: pointer;">
+            <i class="bi bi-speedometer2"></i> Panel Principal
+          </a>
+        </li>
+
+        <li class="nav-item" *ngIf="esAdmin || esRecepcion">
+          <a class="nav-link text-white me-3" routerLink="/corte-caja" routerLinkActive="text-warning" style="cursor: pointer;">
+            <i class="bi bi-cash-stack"></i> Corte de Caja
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link text-white me-3" routerLink="/socios" routerLinkActive="text-warning" style="cursor: pointer;">
+            <i class="bi bi-people-fill"></i> Socios
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link text-white me-3" routerLink="/membresias" routerLinkActive="text-warning" style="cursor: pointer;">
+            <i class="bi bi-tags-fill"></i> Membresías
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/tienda" routerLinkActive="text-warning fw-bold" class="nav-link text-white text-decoration-none mx-2">
+            <i class="bi bi-shop me-1"></i> Tienda
+          </a>
+        </li>
+
+        <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
+          <a class="btn btn-outline-warning fw-bold px-4 rounded-pill" routerLink="/checador" style="cursor: pointer;">
+            <i class="bi bi-upc-scan me-1"></i> Modo Recepción
+          </a>
+        </li>
+
+        <li class="nav-item ms-lg-2 mt-3 mt-lg-0" *ngIf="esAdmin">
+          <a class="btn btn-outline-danger fw-bold px-4 rounded-pill" routerLink="/registro-personal" style="cursor: pointer;">
+            <i class="bi bi-shield-lock-fill me-1"></i> Nuevo Empleado
+          </a>
+        </li>
+
+        <li class="nav-item ms-lg-3 mt-3 mt-lg-0 border-start border-secondary ps-lg-3">
+          <button class="btn btn-danger fw-bold px-4 rounded-pill shadow-sm" (click)="cerrarSesion()">
+            <i class="bi bi-box-arrow-right me-1"></i> Salir
+          </button>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

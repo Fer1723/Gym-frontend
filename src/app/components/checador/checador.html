@@ -1,0 +1,80 @@
+<div class="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center"
+  style="transition: background-color 0.3s ease;" [ngClass]="{
+        'bg-dark': estado === 'esperando', 
+        'bg-success': estado === 'permitido',
+        'bg-warning': estado === 'proximo', 
+        'bg-danger': estado === 'denegado'}">
+
+  <input #escanerInput type="text" class="form-control text-center bg-transparent border-0 text-white shadow-none fs-1"
+    style="position: absolute; opacity: 0; top: 0; left: 0; z-index: -1;"
+    (keydown.enter)="verificarAcceso(escanerInput.value)" (blur)="forzarFoco()" autofocus>
+
+  @if (estado === 'esperando') {
+  <div class="text-center text-white">
+    <i class="bi bi-upc-scan mb-4 d-block" style="font-size: 8rem; color: #6f42c1;"></i>
+    <h1 class="display-1 fw-bold">FACTORY GYM</h1>
+    <p class="fs-2 text-secondary mt-3">Escanee su dedo para ingresar o ingresa el ID del Socio</p>
+  </div>
+  }
+
+  <div class="position-fixed bottom-0 end-0 p-3"
+    style="z-index: 1000; background: #222; border-radius: 10px; border: 1px solid #444;">
+    <label class="text-warning small fw-bold mb-2">Simulador (Modo Dev)</label>
+    <div class="d-flex flex-column gap-2">
+      <button class="btn btn-success btn-sm w-100 text-start" (click)="simularHuellaApp('1')">
+        <i class="bi bi-fingerprint me-2"></i> Poner Huella (Socio ID: 1)
+      </button>
+      <button class="btn btn-info btn-sm w-100 text-start" (click)="simularHuellaApp('2')">
+        <i class="bi bi-fingerprint me-2"></i> Poner Huella (Socio ID: 2)
+      </button>
+    </div>
+  </div>
+  @if (estado !== 'esperando') {
+  <div class="text-center" [ngClass]="estado === 'proximo' ? 'text-dark' : 'text-white'">
+
+    <div class="position-relative d-inline-block mb-4">
+      <img
+        [src]="socioActual?.fotoBase64 || 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 150 150%22%3E%3Crect width=%22150%22 height=%22150%22 fill=%22%23333%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23fff%22 font-size=%2260%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22%3EVE%3C/text%3E%3C/svg%3E'"
+        class="rounded-circle shadow-lg">
+
+      <div class="position-absolute bottom-0 end-0 bg-white rounded-circle shadow" style="padding: 5px;">
+        <i class="bi" [ngClass]="{
+               'bi-check-circle-fill text-success': estado === 'permitido',
+               'bi-exclamation-circle-fill text-warning': estado === 'proximo',
+               'bi-x-circle-fill text-danger': estado === 'denegado'
+             }" style="font-size: 4rem; line-height: 1;"></i>
+      </div>
+    </div>
+
+    <h1 class="display-2 fw-bold text-uppercase">{{ socioActual?.nombre }} {{ socioActual?.apellido }}</h1>
+
+    @if (estado === 'proximo') {
+    <div class="mt-4 text-center">
+      <h2 class="display-3 fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> ¡AVISO DE VENCIMIENTO!</h2>
+      <p class="fs-1">Te quedan <strong>{{ socioActual?.diasRestantes }} días</strong> de membresía.</p>
+      <p class="fs-3 opacity-75">Recuerda renovar en recepción para no perder tu acceso.</p>
+    </div>
+    }
+
+    @if (estado === 'permitido') {
+    <div class="mt-4">
+      <h2 class="display-3 fw-bold"><i class="bi bi-unlock-fill me-2"></i> ¡BIENVENIDO!</h2>
+      <p class="fs-2 mt-3 opacity-75">Plan: <span class="fw-bold">{{ socioActual?.nombrePlan }}</span></p>
+    </div>
+    }
+
+    @if (estado === 'denegado') {
+    <div class="mt-4">
+      <h2 class="display-3 fw-bold"><i class="bi bi-lock-fill me-2"></i> ACCESO DENEGADO</h2>
+      <p class="fs-2 mt-3 opacity-75">{{ socioActual?.nombrePlan ? 'Membresía Vencida' : 'Sin Plan Activo' }}</p>
+
+      <button class="btn btn-outline-light btn-lg mt-4 px-5 py-3 fs-3 shadow" routerLink="/socios">
+        <i class="bi bi-cash-stack me-2"></i> Pasar a Recepción
+      </button>
+    </div>
+    }
+
+  </div>
+  }
+
+</div>

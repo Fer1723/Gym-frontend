@@ -1,0 +1,57 @@
+/* =========================================
+   ESTILOS DE LA FOTO DE PERFIL (REACTIVA)
+========================================= */
+.foto-perfil {
+    width: 100%; /* Toma el espacio disponible... */
+    max-width: 350px; /* ...pero nunca crece más de 350px */
+    aspect-ratio: 1 / 1; /* Mantiene el círculo perfecto sin importar el tamaño */
+    object-fit: cover;
+    border: 10px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease, border-width 0.3s ease;
+}
+
+/* Un toque premium: pequeña animación de latido al aparecer */
+@keyframes latido {
+    0% { transform: scale(0.95); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.foto-perfil {
+    animation: latido 0.4s ease-out forwards;
+}
+
+/* =========================================
+   MEDIA QUERIES (LA MAGIA RESPONSIVA)
+========================================= */
+/* Si la pantalla mide menos de 768px (Tablets, pantallas cuadradas viejas o si encogen la ventana) */
+@media (max-width: 768px) {
+    
+    /* Achicamos la imagen y el borde */
+    .foto-perfil {
+        max-width: 220px;
+        border-width: 6px;
+    }
+
+    /* Achicamos la tipografía gigante de Bootstrap */
+    .display-1 { font-size: 3.5rem !important; }
+    .display-2 { font-size: 2.5rem !important; }
+    .display-3 { font-size: 2rem !important; }
+    
+    /* Achicamos el ícono gigante del escáner */
+    .bi-upc-scan { font-size: 5rem !important; }
+    
+    /* Ajustamos los textos secundarios */
+    p.fs-1 { font-size: 1.5rem !important; }
+    p.fs-2 { font-size: 1.2rem !important; }
+    p.fs-3 { font-size: 1rem !important; }
+}
+
+/* Si la pantalla es súper pequeña (Celulares, aunque sea app de escritorio, por si acaso) */
+@media (max-width: 480px) {
+    .foto-perfil {
+        max-width: 150px;
+    }
+    .display-1 { font-size: 2.5rem !important; }
+    .bi-upc-scan { font-size: 4rem !important; }
+}

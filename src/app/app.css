@@ -1,0 +1,64 @@
+/* =========================================
+   Estilos Globales - Factory Gym
+========================================= */
+
+/* Pintamos todo el fondo de negro y texto blanco */
+body {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+/* Modificamos las tarjetas para que sean grises oscuras */
+.card {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+}
+
+/* Colores personalizados para los botones estilo Gym */
+.btn-gym-purple {
+  background-color: #6f42c1;
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+.btn-gym-purple:hover {
+  background-color: #59339d;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(111, 66, 193, 0.4);
+}
+
+.btn-gym-yellow {
+  background-color: #ffc107;
+  color: #000;
+  border: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+.btn-gym-yellow:hover {
+  background-color: #d39e00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.4);
+}
+
+/* =========================================
+   ¡LA SOLUCIÓN PARA LOS BOTONES DE LAS TABLAS!
+========================================= */
+.btn-accion {
+  width: 32px !important;
+  height: 32px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-accion i {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.btn-accion:hover {
+  transform: scale(1.15);
+}

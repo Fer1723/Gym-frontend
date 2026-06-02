@@ -1,0 +1,71 @@
+/* =========================================
+   ANIMACIÓN DE ENTRADA
+========================================= */
+.container {
+  /* Entrada fluida al cambiar de pantalla */
+  animation: deslizarArriba 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes deslizarArriba {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   TABLA RESPONSIVA (EL BLINDAJE)
+========================================= */
+.card-body.p-0 {
+  /* Si la tabla es más grande que el celular, creamos un scroll interno */
+  overflow-x: auto; 
+}
+
+table {
+  /* Obligamos a que la tabla nunca se aplaste menos de 600px */
+  min-width: 600px; 
+}
+
+/* Al pasar el mouse por una fila, le damos un brillo sutil morado */
+.table-hover tbody tr:hover {
+  background-color: rgba(111, 66, 193, 0.08) !important;
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN (Tu código mejorado)
+========================================= */
+.btn-accion {
+  width: 32px !important;
+  height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-accion i {
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
+}
+
+/* Efecto de salto al apuntar a los botones de editar o borrar */
+.btn-accion:hover {
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================
+   ADAPTACIÓN PARA CELULARES
+========================================= */
+@media (max-width: 768px) {
+  /* El contenedor de "Título" y "Botón Nuevo" se apila en vertical */
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px; /* Separación entre el título y el botón */
+  }
+
+  /* El botón de "Nuevo Plan" ocupa todo el ancho para ser fácil de presionar */
+  .btn-gym-purple {
+    width: 100%;
+  }
+}

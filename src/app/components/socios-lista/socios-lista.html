@@ -1,0 +1,234 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="text-white mb-0">
+        <i class="bi bi-people-fill text-gym-yellow me-2"></i> Directorio de Socios
+      </h2>
+      <span class="slogan-gym">Hardcore Since Ever</span>
+    </div>
+
+    <div>
+      <button class="btn btn-outline-warning me-2" (click)="cobrarVisitaRapida()">
+        <i class="bi bi-ticket-perforated-fill me-1"></i> Visita Express
+      </button>
+      <button class="btn btn-gym-purple" routerLink="/socios/nuevo">
+        <i class="bi bi-person-plus-fill me-1"></i> Nuevo Socio
+      </button>
+    </div>
+  </div>
+
+  <div class="alert alert-danger d-flex align-items-center mx-4 mt-3 shadow" *ngIf="alertaTurnoActual">
+    <i class="fa-solid fa-triangle-exclamation fa-2xl me-3 fa-beat-fade"></i>
+    <div>
+      <h5 class="alert-heading mb-1 fw-bold">¡Tienes un reporte activo en tu turno!</h5>
+      <span>{{ alertaTurnoActual }}</span>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <div class="input-group">
+      <span class="input-group-text bg-dark text-white border-secondary"><i class="bi bi-search"></i></span>
+      <input type="text" class="form-control bg-dark text-white border-secondary" 
+             placeholder="Buscar socio por nombre o apellido..." 
+             (keyup)="buscar($event)">
+    </div>
+  </div>
+
+  <div class="btn-group mb-3" role="group">
+    <button type="button" class="btn" [ngClass]="!verInactivos ? 'btn-primary' : 'btn-outline-primary'" (click)="alternarVistas(false)">
+      Socios Activos
+    </button>
+    <button type="button" class="btn" [ngClass]="verInactivos ? 'btn-warning' : 'btn-outline-warning'" (click)="alternarVistas(true)">
+      Socios dados de baja (Inactivos)
+    </button>
+  </div>
+
+  <div class="card shadow-lg">
+    <div class="card-body p-0">
+      <table class="table table-dark table-hover align-middle mb-0">
+        
+        <thead>
+          <tr>
+            <th class="ps-3 text-secondary" style="width: 50px;">#</th>
+            <th class="text-info">ID Socio</th>
+            <th>Nombre Completo</th>
+            <th>Teléfono</th>
+            <th>Plan Actual</th>
+            <th>Estado</th>
+            <th *ngIf="verInactivos" class="text-danger">Baja por</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          @for (socio of sociosFiltrados; track socio.idSocio; let i = $index){
+            <tr>
+              <td class="ps-3 text-secondary fw-bold">{{ i + 1 }}</td>
+              
+              <td class="fw-bold text-info">#{{ (socio.idSocio + '').padStart(4, '0') }}</td>
+
+              <td class="fw-bold">{{ socio.nombre }} {{ socio.apellido }}</td>
+
+              <td>{{ socio.telefono || '---' }}</td>
+
+              <td>
+                @if (socio.labelEstado === 'Inactivo') {
+                  <span class="badge bg-danger text-white border border-danger">
+                    <i class="bi bi-x-circle-fill me-1"></i> {{ socio.nombrePlan }}
+                  </span>
+                }
+                @else if (socio.nombrePlan) {
+                  <span class="badge bg-info text-dark border border-info">
+                    <i class="bi bi-star-fill me-1"></i> {{ socio.nombrePlan }}
+                  </span>
+                } @else {
+                  <span class="badge bg-dark text-secondary border border-secondary">Sin plan</span>
+                }
+              </td>
+
+              <td>
+                <span class="badge border" 
+                      [ngClass]="{
+                        'bg-success border-success': socio.labelEstado === 'Activo',
+                        'bg-warning text-dark border-warning': socio.labelEstado === '¡Por Vencer!',
+                        'bg-danger border-danger': socio.labelEstado === 'Vencido',
+                        'bg-dark text-secondary border-secondary': socio.labelEstado === 'Sin Plan',
+                        'bg-secondary border-light': socio.labelEstado === 'Inactivo'  
+                        }">
+                  <i class="bi me-1" 
+                      [ngClass]="{
+                          'bi-check-circle-fill': socio.labelEstado === 'Activo',
+                          'bi-exclamation-triangle-fill': socio.labelEstado === '¡Por Vencer!',
+                          'bi-x-octagon-fill': socio.labelEstado === 'Vencido',
+                          'bi-dash-circle': socio.labelEstado === 'Sin Plan',
+                          'bi-person-x-fill': socio.labelEstado === 'Inactivo' 
+                        }"></i>
+                  {{ socio.labelEstado }}
+                </span>
+              </td>
+
+              <td *ngIf="verInactivos" class="text-danger fw-bold small">
+                <i class="bi bi-person-badge-fill me-1"></i> {{ socio.dadoDeBajaPor || 'No registrado' }}
+              </td>
+
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  
+                  @if (!verInactivos && (socio.nombrePlan || socio.labelEstado === 'Vencido')) {
+                    <button class="btn btn-sm btn-success btn-accion" title="Renovar Plan" (click)="renovarRapido(socio)">
+                      <i class="bi bi-cash-coin"></i>
+                    </button>
+                  }
+                  
+                  <button class="btn btn-sm btn-gym-yellow btn-accion" title="Editar" routerLink="/socios/editar/{{ socio.idSocio }}">
+                    <i class="bi bi-pencil-square text-dark"></i>
+                  </button>
+                  
+                  @if (!verInactivos){
+                    <button class="btn btn-sm btn-danger btn-accion" title="Dar de baja" (click)="darDeBaja(socio.idSocio)">
+                      <i class="bi bi-trash3-fill"></i>
+                    </button>
+                  }
+                  @else {
+                    <button class="btn btn-sm btn-success btn-accion" title="Reactivar Socio" (click)="reincorporarSocio(socio)">
+                      <i class="bi bi-person-check-fill"></i>
+                    </button>
+                  }
+                  
+                  <button class="btn btn-sm btn-outline-info btn-accion" title="Ver Perfil" (click)="verDetalle(socio)" data-bs-toggle="modal" data-bs-target="#modalPerfilSocio"> 
+                    <i class="bi bi-eye-fill"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="text-center text-secondary py-5">
+                <i class="bi bi-search fs-1 d-block mb-3"></i>
+                No se encontraron socios con esa búsqueda.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalPerfilSocio" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark border-secondary text-white" *ngIf="socioSeleccionado">
+      
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title"><i class="bi bi-person-vcard text-info me-2"></i> Expediente del Socio</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <div class="mb-4">
+          @if (socioSeleccionado.fotoBase64) {
+            <img [src]="socioSeleccionado.fotoBase64" class="rounded-circle shadow-lg" 
+                 style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #6f42c1;">
+          } @else {
+            <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center" 
+                 style="width: 150px; height: 150px; border: 4px solid #6c757d;">
+              <i class="bi bi-person-fill" style="font-size: 5rem; color: #aaa;"></i>
+            </div>
+          }
+        </div>
+
+        <h3 class="fw-bold mb-1">{{ socioSeleccionado.nombre }} {{ socioSeleccionado.apellido }}</h3>
+        <p class="text-secondary mb-3">
+          <i class="bi bi-telephone-fill me-1"></i> {{ socioSeleccionado.telefono || 'Sin teléfono' }}
+        </p>
+
+        <div class="card bg-black border-secondary mb-3 mx-4">
+          <div class="card-body py-3">
+            <h6 class="text-uppercase text-secondary small mb-2">Estado de Membresía</h6>
+            
+            <div class="mb-2">
+              <span class="badge fs-6 py-2 px-3" 
+                    [ngClass]="{
+                      'bg-success': socioSeleccionado.labelEstado === 'Activo',
+                      'bg-warning text-dark': socioSeleccionado.labelEstado === '¡Por Vencer!',
+                      'bg-danger': socioSeleccionado.labelEstado === 'Vencido',
+                      'bg-dark': socioSeleccionado.labelEstado === 'Sin Plan',
+                      'bg-secondary border-light': socioSeleccionado.labelEstado === 'Inactivo'
+                    }">
+                {{ socioSeleccionado.labelEstado }}
+              </span>
+            </div>
+
+            @if (socioSeleccionado.labelEstado === 'Inactivo' && socioSeleccionado.dadoDeBajaPor) {
+              <div class="mt-3 p-2 bg-danger bg-opacity-10 border border-danger rounded text-danger small text-start">
+                <i class="bi bi-shield-lock-fill me-1"></i> Dado de baja por: <b>{{ socioSeleccionado.dadoDeBajaPor }}</b>
+              </div>
+            }
+
+            @if (socioSeleccionado.nombrePlan) {
+              <p class="mb-0 text-info fw-bold">{{ socioSeleccionado.nombrePlan }}</p>
+              @if (socioSeleccionado.diasRestantes !== null) {
+                <small class="text-secondary">
+                  @if (socioSeleccionado.diasRestantes < 0) {
+                    Venció hace {{ socioSeleccionado.diasRestantes * -1 }} días
+                  } @else {
+                    Quedan {{ socioSeleccionado.diasRestantes }} días restantes
+                  }
+                </small>
+              }
+            } @else {
+              <p class="mb-0 text-muted small">Sin suscripción registrada</p>
+            }
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer border-secondary justify-content-center">
+        <button type="button" class="btn btn-gym-yellow" data-bs-dismiss="modal" [routerLink]="['/socios/editar', socioSeleccionado.idSocio]">
+          <i class="bi bi-pencil-square"></i> Editar Info
+        </button>
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

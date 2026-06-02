@@ -1,0 +1,36 @@
+<div class="container-fluid d-flex align-items-center justify-content-center"
+  style="min-height: 100vh; background-color: #0a0a0a;">
+  <div class="card bg-dark border-secondary shadow-lg" style="width: 100%; max-width: 400px;">
+    <div class="card-body p-5">
+
+      <div class="text-center mb-4">
+        <img src="assets/Logo.png" alt="Logo The Factory Gym" style="max-width: 180px; filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.4));">
+        <h2 class="fw-bold mt-2">
+          <span class="text-white">Factory</span><span style="color: #6f42c1;">Gym</span>
+        </h2>
+        <p class="text-secondary small">Panel de Administración</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="ingresar()">
+
+        <div class="mb-3">
+          <label class="form-label text-secondary small fw-bold"><i class="bi bi-person-fill"></i> Usuario</label>
+          <input type="text" formControlName="username"
+            class="form-control bg-dark text-white border-secondary shadow-none py-2" placeholder="Ingresa tu usuario">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label text-secondary small fw-bold"><i class="bi bi-key-fill"></i> Contraseña</label>
+          <input type="password" formControlName="password"
+            class="form-control bg-dark text-white border-secondary shadow-none py-2" placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn btn-warning w-100 fw-bold py-2 mb-3 shadow-sm">
+          ENTRAR AL SISTEMA <i class="bi bi-box-arrow-in-right ms-1"></i>
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+</div>

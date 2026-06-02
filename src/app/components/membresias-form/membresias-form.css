@@ -1,0 +1,87 @@
+/* =========================================
+   ANIMACIÓN DEL FORMULARIO
+========================================= */
+.card {
+  /* Entrada fluida desde abajo */
+  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* Raya inferior distintiva en color morado para configuración */
+  border-bottom: 4px solid #6f42c1 !important; 
+  border-radius: 10px;
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   INPUTS (INTERACCIÓN ADMINISTRATIVA)
+========================================= */
+.form-control {
+  transition: all 0.3s ease;
+  font-size: 1.05rem;
+  padding: 0.6rem 1rem;
+}
+
+/* Cuando das clic para escribir, brilla en morado neón en lugar del azul de Bootstrap */
+.form-control:focus {
+  background-color: #111 !important;
+  color: #fff !important;
+  border-color: #6f42c1 !important;
+  box-shadow: 0 0 15px rgba(111, 66, 193, 0.3) !important;
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* =========================================
+   ETIQUETAS (LABELS)
+========================================= */
+.form-label {
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+
+/* =========================================
+   BOTONES SECUNDARIOS
+========================================= */
+/* El botón de cancelar / volver se oscurece y se hunde al pasar el mouse */
+.btn-outline-secondary {
+  transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Efecto de "retroceso" en la flechita del botón volver del header */
+.btn-outline-light:hover i {
+  display: inline-block;
+  transform: translateX(-4px);
+  transition: transform 0.3s ease;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA CELULARES
+========================================= */
+@media (max-width: 768px) {
+  /* Le quitamos margen extra arriba en pantallas pequeñas */
+  .container {
+    margin-top: 1rem !important;
+  }
+  
+  /* Ajustamos el tamaño del título */
+  h4 {
+    font-size: 1.2rem;
+  }
+  
+  /* Hacemos que los botones queden un poco más amplios para el dedo */
+  .btn {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+}

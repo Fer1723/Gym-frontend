@@ -1,0 +1,146 @@
+/* =========================================
+   ANIMACIÓN DE ENTRADA AL MÓDULO
+========================================= */
+.container {
+  animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   TARJETAS SUPERIORES (HOVER Y NEÓN)
+========================================= */
+.col-md-4 .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+}
+
+.col-md-4 .card:hover {
+  transform: translateY(-5px);
+}
+
+/* Brillo según el estado (verde si está bien, rojo si hay poco stock) */
+.col-md-4 .border-success:hover { box-shadow: 0 10px 20px rgba(25, 135, 84, 0.15) !important; }
+.col-md-4 .border-danger:hover { box-shadow: 0 10px 20px rgba(220, 53, 69, 0.2) !important; }
+
+/* =========================================
+   BUSCADOR DE PRODUCTOS
+========================================= */
+.input-group-text { border-right: none !important; transition: all 0.3s ease; }
+.form-control { border-left: none !important; transition: all 0.3s ease; padding: 0.75rem 1rem;}
+
+.input-group:focus-within .input-group-text,
+.form-control:focus {
+  background-color: #111 !important;
+  color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.2) !important;
+  outline: none;
+}
+
+.form-control::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+/* =========================================
+   TABLA DEL CATÁLOGO (SCROLLBAR CUSTOM)
+========================================= */
+/* Personalizamos la barra de desplazamiento interna del catálogo */
+.table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #ffc107;
+  border-radius: 4px;
+}
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #d39e00;
+}
+
+table { min-width: 650px; }
+
+/* Fila interactiva */
+.table-hover tbody tr { transition: background-color 0.2s ease; }
+.table-hover tbody tr:hover { background-color: rgba(255, 193, 7, 0.08) !important; }
+
+/* =========================================
+   CARRITO DE COMPRAS (DERECHA)
+========================================= */
+.sticky-top {
+  /* Asegura que el carrito flote elegantemente al hacer scroll */
+  z-index: 10;
+  border-radius: 12px;
+}
+
+/* Elementos de la lista del carrito */
+.list-group-item {
+  transition: background-color 0.2s ease;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* =========================================
+   BOTONES DEL CATÁLOGO Y CARRITO
+========================================= */
+/* Botón de Agregar (Azul) */
+.btn-info {
+  transition: all 0.2s ease;
+}
+.btn-info:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(13, 202, 240, 0.4);
+}
+
+/* Botón de Cobrar (Verde Gigante) */
+.card-footer .btn-success {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 1px;
+}
+.card-footer .btn-success:hover:not(:disabled) {
+  background-color: transparent !important;
+  color: #198754 !important;
+  border: 2px solid #198754;
+  box-shadow: 0 5px 25px rgba(25, 135, 84, 0.4);
+  transform: translateY(-3px);
+}
+.card-footer .btn-success:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Si el botón está desactivado (carrito vacío o sin stock) */
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA CELULARES
+========================================= */
+@media (max-width: 768px) {
+  /* Apilamos el título y el botón de Nuevo Producto */
+  .d-flex.justify-content-between.align-items-center.mb-4 {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+  
+  .btn-outline-warning { width: 100%; }
+  
+  /* Separamos las tarjetas superiores en celular */
+  .col-md-4 { margin-bottom: 15px; }
+  
+  /* El total de la caja del historial se ajusta */
+  .bg-success.px-4 {
+    padding: 0.5rem 1rem !important;
+  }
+  .bg-success.px-4 .fs-4 { font-size: 1.2rem !important; }
+}

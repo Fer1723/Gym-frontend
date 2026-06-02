@@ -1,0 +1,42 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card bg-dark text-white border-secondary shadow-lg">
+        <div class="card-body p-4">
+          <h3 class="text-center text-warning mb-4"><i class="bi bi-shield-lock"></i> Registro de Personal</h3>
+          
+          <form [formGroup]="registroForm" (ngSubmit)="enviar()">
+            <div class="mb-3">
+              <label class="form-label small text-secondary">Nombre de Usuario</label>
+              <input type="text" formControlName="username" class="form-control bg-dark text-white border-secondary">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small text-secondary">Contraseña</label>
+              <input type="password" formControlName="password" class="form-control bg-dark text-white border-secondary">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small text-secondary">Rol Asignado</label>
+              <select formControlName="rol" class="form-select bg-dark text-white border-secondary">
+                <option value="RECEPCION">Recepcionista (Limitado)</option>
+                <option value="ADMIN">Administrador (Total)</option>
+              </select>
+            </div>
+
+            <div class="mb-4 animate__animated animate__fadeIn" *ngIf="registroForm.get('rol')?.value === 'ADMIN'">
+              <label class="form-label small text-danger fw-bold">Llave Maestra de Seguridad</label>
+              <input type="password" formControlName="llaveMaestra" placeholder="Ingresa la clave secreta..." 
+                     class="form-control bg-dark text-white border-danger shadow-none">
+              <div class="form-text text-muted small">Esta llave solo la conoce el dueño del sistema.</div>
+            </div>
+
+            <button type="submit" class="btn btn-warning w-100 fw-bold py-2 shadow-sm">
+              <i class="bi bi-person-plus-fill"></i> Crear Usuario
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

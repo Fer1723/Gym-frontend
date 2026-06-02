@@ -1,0 +1,115 @@
+/* =========================================
+   ANIMACIÓN Y ESTRUCTURA DE LA TARJETA
+========================================= */
+.card {
+  /* Aparece deslizando suavemente desde la derecha */
+  animation: deslizarDerecha 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  border-radius: 12px;
+  overflow: hidden;
+  /* Raya inferior distintiva en amarillo para la Tienda */
+  border-bottom: 4px solid #ffc107 !important; 
+}
+
+@keyframes deslizarDerecha {
+  0% { opacity: 0; transform: translateX(30px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* =========================================
+   LA MAGIA DE LOS INPUT GROUPS (Cajas unidas)
+========================================= */
+/* Quitamos el borde derecho del ícono para que se fusione con el input */
+.input-group-text {
+  border-right: none !important; 
+  transition: all 0.3s ease;
+}
+
+/* Quitamos el borde izquierdo del input y ajustamos la letra */
+.form-control, .form-select {
+  border-left: none !important;
+  padding: 0.75rem 1rem;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+}
+
+/* =========================================
+   EFECTO FOCUS (Cuando escribes)
+========================================= */
+/* Cuando tocas el input, quitamos el brillo azul de Bootstrap */
+.form-control:focus, .form-select:focus {
+  background-color: #111 !important;
+  color: #fff !important;
+  border-color: #ffc107 !important;
+  box-shadow: none !important; 
+}
+
+/* EL TRUCO ESTRELLA: Ilumina también el cuadro del ícono cuando escribes */
+.input-group:focus-within .input-group-text {
+  border-color: #ffc107 !important;
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+/* Oscurecemos el texto falso (placeholder) */
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Personalizamos el fondo oscuro de las opciones del Select */
+.form-select option {
+  background-color: #222;
+  color: #fff;
+}
+
+/* =========================================
+   BOTONES E INTERACCIONES
+========================================= */
+/* Botón de guardar (Efecto fantasma flotante) */
+.btn-warning {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 1px;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background-color: transparent !important;
+  color: #ffc107 !important;
+  border: 1px solid #ffc107;
+  box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+  transform: translateY(-3px);
+}
+
+/* Si el formulario está incompleto, el botón se ve "apagado" y muerto */
+.btn-warning:disabled {
+  background-color: #333 !important;
+  border-color: #333 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Botón de volver (Animación de la flechita) */
+.btn-outline-light:hover i {
+  display: inline-block;
+  transform: translateX(-4px);
+  transition: transform 0.3s ease;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA CELULARES
+========================================= */
+@media (max-width: 768px) {
+  /* Ajustamos textos para que no se amontonen */
+  .card-header h5 {
+    font-size: 1.1rem;
+  }
+  
+  /* Optimizamos los espacios interiores */
+  .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  /* El botón de guardar se adapta perfecto para el dedo pulgar */
+  .btn-warning {
+    font-size: 1.1rem !important;
+    padding: 1rem !important;
+  }
+}

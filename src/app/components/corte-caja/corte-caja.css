@@ -1,0 +1,86 @@
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+.container {
+  /* Evita que en monitores gigantes las tarjetas se estiren a lo loco */
+  max-width: 1400px; 
+  /* Animación de entrada fluida al abrir el módulo */
+  animation: deslizarArriba 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* =========================================
+   TARJETAS Y COLUMNAS
+========================================= */
+/* Obligamos a que la tarjeta de la izquierda y la derecha midan lo mismo en altura */
+.card {
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  /* Un brillo amarillo súper sutil al pasar el mouse por la tarjeta */
+  box-shadow: 0 15px 35px rgba(255, 193, 7, 0.1) !important; 
+}
+
+/* =========================================
+   LISTAS Y TABLAS DE DATOS
+========================================= */
+.list-group-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: background-color 0.2s ease, padding-left 0.3s ease;
+}
+
+.list-group-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Al pasar el mouse, el texto se mueve un poquito a la derecha (Efecto premium) */
+.list-group-item:hover {
+  background-color: rgba(255, 193, 7, 0.05) !important;
+  padding-left: 1.5rem;
+}
+
+/* =========================================
+   INPUTS (ELIMINAR EL AZUL DE BOOTSTRAP)
+========================================= */
+/* Cuando el usuario hace clic para escribir el efectivo, brilla en amarillo, no en azul */
+.form-control:focus {
+  background-color: #1a1a1a !important;
+  color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.3) !important;
+  outline: none;
+}
+
+/* El cuadro gris al lado del input del dinero ($) */
+.input-group-text {
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA PANTALLAS PEQUEÑAS
+========================================= */
+@media (max-width: 768px) {
+  h2 {
+    font-size: 1.8rem;
+    text-align: center; /* Centramos el título en pantallas chicas */
+  }
+  
+  /* Reducimos un poco el tamaño de las fuentes de los totales */
+  .fs-5 { font-size: 1.1rem !important; }
+  
+  /* Quitamos el hover que mueve el texto porque en táctil no existe */
+  .list-group-item:hover {
+    padding-left: 1rem;
+  }
+}
+
+/* =========================================
+   ANIMACIONES
+========================================= */
+@keyframes deslizarArriba {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

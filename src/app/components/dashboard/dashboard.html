@@ -1,0 +1,220 @@
+<div class="container mt-4">
+  <h2 class="mb-4"><i class="bi bi-speedometer2 text-primary me-2"></i>Panel de Control (Dueño)</h2>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card bg-dark border-success shadow h-100">
+        <div class="card-body text-center">
+          <h5 class="text-success"><i class="bi bi-cash-stack fs-1 d-block mb-2"></i>Ingresos del Mes</h5>
+          <h2 class="display-4 fw-bold text-white">${{ ingresosTotales | number:'1.2-2' }}</h2>
+          
+          <div class="d-flex justify-content-between text-secondary small px-3 mt-3 mb-3 border-top border-secondary pt-3">
+            <span class="text-start">
+              Membresías:<br>
+              <strong class="text-white fs-6">${{ ingresosSuscripciones | number:'1.2-2' }}</strong>
+            </span>
+            <span class="text-end">
+              Visitas ({{ cantidadVisitasMes }}):<br>
+              <strong class="text-warning fs-6">${{ ingresosVisitas | number:'1.2-2' }}</strong>
+            </span>
+          </div>
+
+          <button class="btn btn-sm btn-outline-success w-100" (click)= "toggleIngresos()">
+            <i class="bi" [class.bi-chevron-down]="!mostrarDetallesIngresos" [class.bi-chevron-up]="mostrarDetallesIngresos"></i> Detalles de Membresías
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card bg-dark border-info shadow h-100">
+        <div class="card-body text-center">
+          <h5 class="text-info"><i class="bi bi-people-fill fs-1 d-block mb-2"></i>Socios Activos</h5>
+          <h2 class="fw-bold text-white">{{ totalSociosActivos }}</h2>
+          <small class="text-secondary d-block mb-2">Con membresía vigente</small>
+          <button class="btn btn-sm btn-outline-info w-100" (click)="toggleActivos()">
+            <i class="bi" [class.bi-chevron-down]="!mostrarDetallesActivos" [class.bi-chevron-up]="mostrarDetallesActivos"></i> Detalles
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card bg-dark border-warning shadow h-100">
+        <div class="card-body text-center">
+          <h5 class="text-warning"><i class="bi bi-exclamation-triangle-fill fs-1 d-block mb-2"></i>Vencen Hoy</h5>
+          <h2 class="fw-bold text-white">{{ vencimientosHoy }}</h2>
+          <small class="text-secondary d-block mb-2">Posibles renovaciones hoy</small>
+          <button class="btn btn-sm btn-outline-warning w-100" (click)="toggleVencimientos()">
+            <i class="bi" [class.bi-chevron-down]="!mostrarDetallesVencimientos" [class.bi-chevron-up]="mostrarDetallesVencimientos"></i> Detalles
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4" *ngIf="alertasCaja.length > 0">
+  <div class="col-12">
+    <div class="card bg-dark border-danger shadow">
+      <div class="card-header border-danger bg-danger text-white fw-bold d-flex justify-content-between align-items-center">
+        <span><i class="fa-solid fa-user-shield fa-fade me-2"></i> Reportes de Faltantes/Sobrantes</span>
+        <span class="badge bg-light text-danger rounded-pill">{{ alertasCaja.length }} Alertas</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-dark table-hover mb-0">
+          <thead>
+            <tr>
+              <th class="text-secondary ps-3">Fecha</th>
+              <th class="text-secondary">Usuario Responsable</th> 
+              <th class="text-secondary">Mensaje de Auditoría</th>
+              <th class="text-secondary text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let alerta of alertasCaja">
+              <td class="ps-3">{{ alerta.fechaApertura | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span class="badge bg-secondary me-1">ID: {{ alerta.usuario?.id || alerta.usuarioId || '?' }}</span> 
+                <span class="badge bg-warning text-dark fw-bold"> 
+                  <i class="bi bi-person-fill me-1"></i> {{ alerta.usuario?.username || 'Revisar DB' }}
+                </span>
+              </td>
+              <td class="text-warning fw-bold"><i class="bi bi-shield-exclamation me-1"></i> {{ alerta.observaciones }}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-success fw-bold" (click)="resolverAlerta(alerta)">
+                  <i class="bi bi-check2-square"></i> Resolver
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <div class="row mt-4">
+  
+  @if (mostrarDetallesIngresos) {
+    <div class="col-12 mb-4">
+      <div class="card bg-dark border-success">
+        <div class="card-header bg-success text-white">
+          <h6 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Desglose de Ingresos (Mes Actual)</h6>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-dark table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Socio</th>
+                <th>Plan Vendido</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (venta of listaIngresos; track venta.idSuscripcion) {
+                <tr>
+                  <td>{{ venta.fechaInicio | date:'dd/MMM/yyyy' }}</td>
+                  <td>{{ venta.socio?.nombre }} {{ venta.socio?.apellido }}</td>
+                  <td><span class="badge bg-secondary">{{ venta.membresia?.nombre }}</span></td>
+                  
+                  <td class="text-success fw-bold">${{ (venta.montoCobrado ?? venta.membresia?.precio) | number:'1.2-2' }}</td>
+                  
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (mostrarDetallesActivos) {
+    <div class="col-12 mb-4">
+      <div class="card bg-dark border-success">
+        <div class="card-header bg-success text-white">
+          <h6 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Desglose de Socios Activos </h6>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-dark table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Plan Suscrito</th>
+                <th>Vence el</th>
+                <th>Telefono</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (activo of listaActivos; track activo.idSuscripcion) {
+                <tr>
+                  <td>
+                    <i class="bi bi-person-circle me-2 text-info"></i>
+                    {{activo.socio?.nombre}} {{activo.socio?.apellido}}
+                  </td>
+                  <td>
+                    <span class="badge bg-info text-dark"> {{activo.membresia?.nombre}}</span>
+                  </td>
+                  <td class="text-light">
+                    {{activo.fechaFin | date:'dd/MMM/yyyy'}}
+                  </td>
+                  <td>
+                    <i class="bi bi-telephone me-1"></i>
+                    {{activo.socio?.telefono || 'No registrado'}}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+  
+  @if (mostrarDetallesVencimientos) {
+    <div class="col-12 mb-4">
+      <div class="card bg-dark border-warning">
+        <div class="card-header bg-warning text-dark fw-bold">
+          <h6 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Socios que vencen HOY</h6>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-dark table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Socio</th>
+                <th>Plan que Termina</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (vencido of listaVencimientos; track vencido.idSuscripcion) {
+                <tr>
+                  <td>{{ vencido.socio?.nombre }} {{ vencido.socio?.apellido }}</td>
+                  <td>{{ vencido.membresia?.nombre }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-warning" routerLink="/socios">
+                      <i class="bi bi-cash"></i> Ir a cobrar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12 text-center">
+      <h4 class="text-secondary mb-4">Accesos Rápidos</h4>
+      <button class="btn btn-outline-primary mx-2 btn-lg" routerLink="/socios">
+        <i class="bi bi-person-lines-fill me-2"></i>Directorio
+      </button>
+      <button class="btn btn-outline-success mx-2 btn-lg" routerLink="/checador">
+        <i class="bi bi-door-open me-2"></i>Checador de Accesos
+      </button>
+    </div>
+  </div>
+</div>
