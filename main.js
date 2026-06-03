@@ -17,10 +17,16 @@ function arrancarMotor() {
         
         logStream.write('\n--- NUEVO INTENTO DE ARRANQUE: ' + new Date().toLocaleTimeString() + ' ---\n');
 
-        // 🛡️ MULTIPLATAFORMA 2: Rutas relativas
-        // Buscamos el .jar adentro de tu misma carpeta de Electron (ej. en una subcarpeta 'backend')
-        const jarPath = path.join(__dirname, 'backend', 'backend.jar');
-
+        // 🛡️ MULTIPLATAFORMA 2: Rutas relativas dinámicas
+        let jarPath;
+        if (app.isPackaged) {
+            // Si la app está empaquetada (Producción), busca en la carpeta especial de Recursos
+            jarPath = path.join(process.resourcesPath, 'backend', 'backend.jar');
+        } else {
+            // Si estamos programando (Desarrollo), busca en la carpeta normal
+            jarPath = path.join(__dirname, 'backend', 'backend.jar');
+        }
+        
         // 2. Encendemos el motor usando la variable global (quitamos el shell: true)
         motorJava = spawn('java', ['-jar', jarPath]);
 

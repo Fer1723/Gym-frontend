@@ -24,6 +24,17 @@
       "main.js",
       "preload.js"
     ],
+    "extraResources": [
+      {
+        "from": "backend",
+        "to": "backend",
+        "filter": ["**/*"]
+      }
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "src/assets/logo.png"
+    },
     "win": {
       "target": "nsis",
       "icon": "src/assets/logo.png"
@@ -34,7 +45,7 @@
       "createDesktopShortcut": true
     }
   },
-  "prettier": {
+  "prettier":{
     "printWidth": 100,
     "singleQuote": true,
     "overrides": [
