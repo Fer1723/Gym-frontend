@@ -23,6 +23,7 @@ export class SociosLista implements OnInit {
   suscripcionesActivas: any[] = [];
   planesDisponibles: any[] = [];
   verInactivos: boolean = false;
+  terminoBusqueda: string = '';
 
   socioSeleccionado: any = null;
 
@@ -30,6 +31,11 @@ export class SociosLista implements OnInit {
   tiempoUltmatecla: number = 0;
 
   alertaTurnoActual: String | null = null;
+
+  paginaActual: number = 0;
+  tamanoPagina: number = 15;
+  totalPaginas: number = 0;
+  totalElementos: number = 0;
 
   @HostListener('window:keydown', ['$event'])
   manejarTeclado(event: KeyboardEvent) {
@@ -66,7 +72,7 @@ export class SociosLista implements OnInit {
 
     // 🛡️ 1. NUEVA LÓGICA DE AISLAMIENTO: ¿Empieza con el prefijo "V-"?
     if (codigo.startsWith('V-')) {
-      
+
       // 🚀 Es una VISITA EXPRESS
       this.visitaService.validarPin(codigo).subscribe({
         next: (respuesta: any) => {
@@ -93,9 +99,9 @@ export class SociosLista implements OnInit {
           });
         }
       });
-      
+
     } else {
-      
+
       // 🧍‍♂️ 2. Es un SOCIO NORMAL
       const idSocio = Number(codigo);
 
@@ -138,6 +144,20 @@ export class SociosLista implements OnInit {
     this.verificarCaja();
   }
 
+  paginaSiguiente() {
+    if (this.paginaActual < this.totalPaginas - 1) {
+      this.paginaActual++;
+      this.cargarDatosCruzados();
+    }
+  }
+
+  paginaAnterior() {
+    if (this.paginaActual > 0) {
+      this.paginaActual--;
+      this.cargarDatosCruzados();
+    }
+  }
+
   verificarCaja() {
 
     const userId = localStorage.getItem('userId');
@@ -148,7 +168,7 @@ export class SociosLista implements OnInit {
         localStorage.setItem('turnoId', turno.id.toString());
         console.log('✅ Turno activo de recepción encontrado:', turno.id);
 
-        if(turno.observaciones && turno.observaciones.includes('ALERTA')){
+        if (turno.observaciones && turno.observaciones.includes('ALERTA')) {
           this.alertaTurnoActual = turno.observaciones;
         }
       },
@@ -161,21 +181,21 @@ export class SociosLista implements OnInit {
   mostrarModalApertura(userId: number) {
     this.turnoCajaService.obtenerUltimoEfectivo().subscribe({
       next: (data: any) => {
-        
+
         console.log("Respuesta de Java para el último efectivo:", data);
 
         let ultimoEfectivo = 0;
         let usuarioAnterior = 'Turno Anterior';
 
         if (typeof data === 'object' && data !== null) {
-          ultimoEfectivo = Number(data.efectivo) || 0; 
+          ultimoEfectivo = Number(data.efectivo) || 0;
           usuarioAnterior = data.usuarioAnterior || 'Turno Anterior';
         } else if (typeof data === 'number' || !isNaN(Number(data))) {
           ultimoEfectivo = Number(data);
         }
 
         const usuarioActual = localStorage.getItem('username') || `ID ${userId}`;
-        
+
         // 1. PRIMER MODAL: Ingreso de efectivo (Ciego)
         Swal.fire({
           title: '¡Bienvenido! Abre tu caja',
@@ -201,8 +221,8 @@ export class SociosLista implements OnInit {
             let observaciones = 'Apertura normal sin discrepancias';
 
             // 2. COMPARACIÓN (Sin botón de escape)
-            if (ultimoEfectivo > 0 && Math.abs(ultimoEfectivo - efectivoIngresado) > 0.01)  {
-              
+            if (ultimoEfectivo > 0 && Math.abs(ultimoEfectivo - efectivoIngresado) > 0.01) {
+
               const diferencia = Math.abs(ultimoEfectivo - efectivoIngresado);
               const tipoDiferencia = efectivoIngresado < ultimoEfectivo ? 'FALTANTE DE' : 'SOBRANTE DE';
 
@@ -223,9 +243,9 @@ export class SociosLista implements OnInit {
                 confirmButtonColor: '#d33',
                 confirmButtonText: 'Aceptar y Generar Alerta'
               }).then(() => {
-                
+
                 observaciones = `ALERTA DE AUDITORÍA: El turno actual arrancó con $${efectivoIngresado}, pero el turno anterior había dejado $${ultimoEfectivo}. Diferencia de $${diferencia.toFixed(2)}.`;
-                
+
                 this.ejecutarAperturaFinal(userId, efectivoIngresado, observaciones);
               });
 
@@ -242,20 +262,20 @@ export class SociosLista implements OnInit {
         this.abrirTurnoPlanB(userId);
       }
     });
-}
+  }
 
   // 👇 FUNCIÓN DE APOYO 1: Mandar el paquete completo de 3 datos a Java 👇
   ejecutarAperturaFinal(userId: number, efectivo: number, observacionesAlerta: string) {
-    const datosApertura = { 
-      usuarioId: userId, 
+    const datosApertura = {
+      usuarioId: userId,
       efectivoInicial: efectivo,
-      observaciones: observacionesAlerta 
+      observaciones: observacionesAlerta
     };
 
     this.turnoCajaService.abrirTurno(datosApertura).subscribe({
       next: (nuevoTurno: any) => {
         localStorage.setItem('turnoId', nuevoTurno.id.toString());
-        if(nuevoTurno.observaciones && nuevoTurno.observaciones.includes('ALERTA')){
+        if (nuevoTurno.observaciones && nuevoTurno.observaciones.includes('ALERTA')) {
           this.alertaTurnoActual = nuevoTurno.observaciones;
         }
 
@@ -379,23 +399,27 @@ export class SociosLista implements OnInit {
     });
   }
 
-  // EL MÉTODO MAESTRO UNIFICADO
+  // EL MÉTODO MAESTRO UNIFICADO (Paginación + Suscripciones)
   cargarDatosCruzados() {
-    // 1. Cambiamos a obtenerTodos para recibir a TODOS los socios de la DB
-    this.socioService.obtenerTodos().subscribe({
-      next: (sociosDb) => {
+    // 1. ¡La clave está aquí! Cambiamos obtenerTodos() por tu petición de paginación
+    this.socioService.obtenerSociosPaginados(this.paginaActual, this.tamanoPagina, this.terminoBusqueda).subscribe({
+      next: (respuesta) => {
+        const sociosDb = respuesta.content;
+
+        // 2. Guardamos la info de las páginas para el HTML
+        this.totalPaginas = respuesta.totalPages;
+        this.totalElementos = respuesta.totalElements;
+
+        // 3. Cruzamos los datos exactamente como ya lo tenías
         this.suscripcionService.obtenerTodas().subscribe({
           next: (suscripciones) => {
             this.suscripcionesActivas = suscripciones || [];
 
             this.socios = (sociosDb || [])
-              // 2. EL FILTRO DINÁMICO: 
-              // Si verInactivos es false, filtramos los que tienen estado true (Activos)
-              // Si verInactivos es true, filtramos los que tienen estado false (Archivo Muerto)
-              .filter(s => s.estado === !this.verInactivos)
-              .map(socio => {
+              .filter((s: any) => s.estado === !this.verInactivos)
+              .map((socio: any) => {
                 const susSuscripciones = this.suscripcionesActivas.filter(
-                  s => s.socio && Number(s.socio.idSocio) === Number(socio.idSocio)
+                  (s: any) => s.socio && Number(s.socio.idSocio) === Number(socio.idSocio)
                 );
 
                 let laMasReciente = null;
@@ -449,7 +473,7 @@ export class SociosLista implements OnInit {
             this.sociosFiltrados = [...this.socios];
 
             if (this.socioSeleccionado) {
-              const actualizado = this.socios.find(s => s.idSocio === this.socioSeleccionado.idSocio);
+              const actualizado = this.socios.find((s: any) => s.idSocio === this.socioSeleccionado.idSocio);
               if (actualizado) this.socioSeleccionado = actualizado;
             }
 
@@ -501,22 +525,22 @@ export class SociosLista implements OnInit {
       cancelButtonColor: '#6c757d',
       confirmButtonText: '<i class="bi bi-person-check-fill"></i> Confirmar y Cobrar',
       cancelButtonText: 'Cancelar',
-      
+
       // 🛡️ EL BLINDAJE AQUÍ: Usamos Swal.getPopup() para ir a la segura
       preConfirm: () => {
         const popup = Swal.getPopup();
         if (popup) {
           const selectPlan = popup.querySelector('#reinc-plan') as HTMLSelectElement;
           const selectMetodo = popup.querySelector('#reinc-metodo') as HTMLSelectElement;
-          
+
           if (!selectPlan || !selectMetodo) {
             Swal.showValidationMessage('Error interno leyendo el formulario');
             return false;
           }
 
-          return { 
-            idPlan: Number(selectPlan.value), 
-            metodo: selectMetodo.value 
+          return {
+            idPlan: Number(selectPlan.value),
+            metodo: selectMetodo.value
           };
         }
         return false;
@@ -529,8 +553,8 @@ export class SociosLista implements OnInit {
 
         // 🛡️ SEGUNDO BLINDAJE: Verificamos que sí tengamos datos reales antes de molestar a Java
         if (!idPlanElegido || !metodoElegido) {
-           Swal.fire('Error', 'No se detectó el plan o el método de pago', 'error');
-           return;
+          Swal.fire('Error', 'No se detectó el plan o el método de pago', 'error');
+          return;
         }
 
         // 1. Reactivamos su expediente (Estado = true)
@@ -539,12 +563,12 @@ export class SociosLista implements OnInit {
             // 2. Le vendemos la nueva membresía (Enviamos 'true' en aplicaInscripcion)
             this.suscripcionService.inscribirSocio(socio.idSocio, idPlanElegido, metodoElegido, true).subscribe({
               next: (respuesta: any) => {
-                
+
                 // Imprimir ticket si existe el motor de Electron
-                if(window.electronAPI){
+                if (window.electronAPI) {
                   const planSeleccionado = this.planesDisponibles.find(p => p.idMembresia === idPlanElegido);
                   const valorCobrado = (planSeleccionado ? planSeleccionado.precio : 0) + costoInscripcion;
-                  
+
                   const datosTicket = {
                     identificador: socio.idSocio,
                     clave: respuesta.claveTransaccion || respuesta.idSuscripcion || idPlanElegido,
@@ -589,11 +613,9 @@ export class SociosLista implements OnInit {
   }
 
   buscar(evento: any) {
-    const texto = evento.target.value.toLowerCase();
-    this.sociosFiltrados = this.socios.filter(socio =>
-      socio.nombre.toLowerCase().includes(texto) ||
-      socio.apellido.toLowerCase().includes(texto)
-    );
+    this.terminoBusqueda = evento.target.value;
+    this.paginaActual = 0;
+    this.cargarDatosCruzados(); // Disparamos la petición a Java
   }
 
   darDeBaja(id: number | undefined) {
@@ -730,13 +752,13 @@ export class SociosLista implements OnInit {
 
         this.suscripcionService.inscribirSocio(socio.idSocio, idMembresiaElegida, metodoPagoElegido, false).subscribe({
           next: (respuesta: any) => {
-            if(window.electronAPI){
+            if (window.electronAPI) {
               const planSeleccionado = this.planesDisponibles.find(p => p.idMembresia === idMembresiaElegida);
               let valorCobrado = planSeleccionado ? planSeleccionado.precio : 0;
-              if(diasRestantes >= 0 && planSeleccionado && planSeleccionado.duracionDias >= 28 && planSeleccionado.duracionDias <= 31){
+              if (diasRestantes >= 0 && planSeleccionado && planSeleccionado.duracionDias >= 28 && planSeleccionado.duracionDias <= 31) {
                 const nombrePlan = planSeleccionado.nombre.toUpperCase();
-                if(nombrePlan.includes('MUJER')) valorCobrado -= 30;
-                else if (nombrePlan.includes('ESTUDIANTE')) valorCobrado -=40;
+                if (nombrePlan.includes('MUJER')) valorCobrado -= 30;
+                else if (nombrePlan.includes('ESTUDIANTE')) valorCobrado -= 40;
                 else if (nombrePlan.includes('MENSUALIDAD')) valorCobrado -= 20;
               }
               const datosTicket = {
@@ -747,7 +769,7 @@ export class SociosLista implements OnInit {
                 valor: valorCobrado,
                 estado: 'Pagada',
                 fechaInicio: respuesta.fechaInicio || new Date().toLocaleDateString('es-MX'),
-                fechaFin: respuesta.fechaFin || '', 
+                fechaFin: respuesta.fechaFin || '',
                 folio: respuesta.folio || respuesta.idSuscripcion || '0001'
               };
               window.electronAPI.imprimirTicket(datosTicket);

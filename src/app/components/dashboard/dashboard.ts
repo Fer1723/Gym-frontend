@@ -10,6 +10,8 @@ import { Suscripcion } from '../../models/suscripcion';
 import { TurnoCaja } from '../../services/turno-caja';
 import Swal from 'sweetalert2';
 
+import { CajaService } from '../../services/caja';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -39,6 +41,9 @@ export class Dashboard implements OnInit {
 
   alertasCaja: any[] = [];
 
+  listaMovimientos: any[] = [];
+  totalGastosDia: number = 0;
+
   toggleIngresos() { this.mostrarDetallesIngresos = !this.mostrarDetallesIngresos; }
   toggleActivos() { this.mostrarDetallesActivos = !this.mostrarDetallesActivos; }
   toggleVencimientos() { this.mostrarDetallesVencimientos = !this.mostrarDetallesVencimientos; }
@@ -48,6 +53,7 @@ export class Dashboard implements OnInit {
     private suscripcionService: SuscripcionService,
     private visitaService: VisitaService,
     private turnoCajaService: TurnoCaja,
+    private cajaService: CajaService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -56,6 +62,23 @@ export class Dashboard implements OnInit {
     this.obtenerIngresosVisitas();
     this.verificarCaja();
     this.cargarAlertas();
+    this.obtenerAuditoriaCaja();
+  }
+
+  obtenerAuditoriaCaja() {
+    this.cajaService.obtenerMovimientosDelDia().subscribe({
+      next: (movimientos: any[]) => {
+        this.listaMovimientos = movimientos;
+        
+        // Sumamos automáticamente todo lo que fue "SALIDA"
+        this.totalGastosDia = movimientos
+          .filter(m => m.tipo === 'SALIDA')
+          .reduce((suma, mov) => suma + mov.monto, 0);
+          
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => console.error('Error al cargar la auditoría de caja', err)
+    });
   }
 
   cargarAlertas(){

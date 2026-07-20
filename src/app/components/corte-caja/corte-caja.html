@@ -5,31 +5,70 @@
 
     <div class="col-md-6 mb-4">
       <div class="card bg-dark border-secondary">
+
         <div class="card-header border-secondary fw-bold text-info">
-          <i class="bi bi-bar-chart-fill"></i> Origen de Ingresos
+          <i class="bi bi-bar-chart-fill"></i> Balance Operativo del Turno
         </div>
+
         <ul class="list-group list-group-flush">
-          <li class="list-group-item bg-dark text-white d-flex justify-content-between">
-            <span>Membresías e Inscripciones:</span>
-            <strong>{{ corte.totalMembresias | currency:'MXN' }}</strong>
+          <li class="list-group-item bg-dark text-white d-flex justify-content-between border-secondary pb-1">
+            <span class="text-secondary small">INGRESOS BRUTOS</span>
           </li>
-          <li class="list-group-item bg-dark text-white d-flex justify-content-between">
-            <span>Visitas Express:</span>
-            <strong>{{ corte.totalVisitas | currency:'MXN' }}</strong>
+          <li class="list-group-item bg-dark text-white d-flex justify-content-between border-0 py-1">
+            <span><i class="bi bi-card-checklist me-2 text-success"></i>Membresías:</span>
+            <strong class="text-success">+{{ corte.totalMembresias | currency:'MXN' }}</strong>
           </li>
-          <li class="list-group-item bg-dark text-white d-flex justify-content-between">
-            <span>Tienda:</span>
-            <strong>{{ corte.totalTienda | currency:'MXN' }}</strong>
+          <li class="list-group-item bg-dark text-white d-flex justify-content-between border-0 py-1">
+            <span><i class="bi bi-person-walking me-2 text-success"></i>Visitas Express:</span>
+            <strong class="text-success">+{{ corte.totalVisitas | currency:'MXN' }}</strong>
           </li>
+          <li class="list-group-item bg-dark text-white d-flex justify-content-between border-0 py-1">
+            <span><i class="bi bi-shop me-2 text-success"></i>Tienda:</span>
+            <strong class="text-success">+{{ corte.totalTienda | currency:'MXN' }}</strong>
+          </li>
+
+          <li
+            class="list-group-item bg-dark text-white d-flex justify-content-between border-secondary pb-1 mt-2 border-top">
+            <span class="text-secondary small">GASTOS Y RETIROS MANUALES</span>
+          </li>
+
+          <li *ngIf="listaMovimientos.length === 0"
+            class="list-group-item bg-dark text-muted d-flex justify-content-center border-0 py-2 small">
+            No se han registrado salidas de efectivo.
+          </li>
+
+          @for (mov of listaMovimientos; track $index) {
+          <li *ngIf="mov.tipo === 'SALIDA'"
+            class="list-group-item bg-dark text-white d-flex justify-content-between border-0 py-1 text-danger">
+            <span class="text-truncate" style="max-width: 70%;" title="{{ mov.concepto }}">
+              <i class="bi bi-arrow-down-right me-2"></i>{{ mov.concepto }}
+            </span>
+            <strong>-{{ mov.monto | currency:'MXN' }}</strong>
+          </li>
+          }
+
         </ul>
-        <div class="card-footer border-secondary text-end fs-5 text-success">
-          Total General: <strong>{{ corte.granTotal | currency:'MXN' }}</strong>
+
+        <div class="card-footer border-secondary mt-2">
+          <div class="d-flex justify-content-between text-secondary mb-1">
+            <span>Total Ventas:</span>
+            <span>{{ corte.granTotal | currency:'MXN' }}</span>
+          </div>
+          <div class="d-flex justify-content-between text-danger mb-2 pb-2 border-bottom border-secondary">
+            <span>Total Egresos:</span>
+            <span>-{{ totalGastos | currency:'MXN' }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <span class="fs-6 text-white">Saldo Operativo Neto:</span>
+            <strong class="fs-4 text-info">{{ (corte.granTotal - totalGastos) | currency:'MXN' }}</strong>
+          </div>
         </div>
+
       </div>
     </div>
 
     <div class="col-md-6 mb-4">
-      
+
       <div class="card bg-dark border-secondary mb-3">
         <div class="card-header border-secondary fw-bold text-warning">
           <i class="bi bi-wallet2"></i> Métodos de Pago
@@ -45,19 +84,24 @@
             <strong>{{ (corte.totalTarjeta || 0) | currency:'MXN' }}</strong>
           </div>
           <hr class="border-secondary">
-          <h5 class="d-flex justify-content-between text-white">
+          <h5 class="d-flex justify-content-between text-white mb-3">
             <span>Efectivo Esperado en Cajón:</span>
-            <span class="text-warning">{{ corte.totalEfectivo | currency:'MXN' }}</span>
+            <span class="text-warning fw-bold">{{ corte.totalEfectivo | currency:'MXN' }}</span>
           </h5>
+
+          <button class="btn btn-outline-info w-100 fw-bold" (click)="registrarMovimiento()">
+            <i class="bi bi-arrow-left-right me-2"></i> Registrar Gasto / Entrada de Efectivo
+          </button>
+
         </div>
       </div>
 
       <div class="card bg-dark border-secondary">
         <div class="card-body">
-          
+
           <div *ngIf="esRecepcion">
             <label class="form-label text-info fw-bold">¿Cuánto efectivo físico contaste?</label>
-            
+
             <div class="input-group mb-3">
               <span class="input-group-text bg-secondary border-secondary text-white">$</span>
               <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="efectivoFisico"
@@ -67,9 +111,12 @@
             <div *ngIf="efectivoFisico !== null" class="mb-3">
               <div class="alert py-2 mb-0"
                 [ngClass]="{'alert-success': diferenciaEfectivo === 0, 'alert-danger': diferenciaEfectivo < 0, 'alert-warning': diferenciaEfectivo > 0}">
-                <span *ngIf="diferenciaEfectivo === 0"><i class="bi bi-check-circle-fill"></i> ¡Caja Cuadrada Perfectamente!</span>
-                <span *ngIf="diferenciaEfectivo < 0"><i class="bi bi-exclamation-triangle-fill"></i> Faltante en caja: {{ diferenciaEfectivo | currency:'MXN' }}</span>
-                <span *ngIf="diferenciaEfectivo > 0"><i class="bi bi-info-circle-fill"></i> Sobrante en caja: +{{ diferenciaEfectivo | currency:'MXN' }}</span>
+                <span *ngIf="diferenciaEfectivo === 0"><i class="bi bi-check-circle-fill"></i> ¡Caja Cuadrada
+                  Perfectamente!</span>
+                <span *ngIf="diferenciaEfectivo < 0"><i class="bi bi-exclamation-triangle-fill"></i> Faltante en caja:
+                  {{ diferenciaEfectivo | currency:'MXN' }}</span>
+                <span *ngIf="diferenciaEfectivo > 0"><i class="bi bi-info-circle-fill"></i> Sobrante en caja: +{{
+                  diferenciaEfectivo | currency:'MXN' }}</span>
               </div>
             </div>
 
@@ -80,21 +127,24 @@
 
           <div *ngIf="esAdmin">
             <h5 class="text-success mb-3"><i class="bi bi-safe2"></i> Cierre General y Retiro</h5>
-            
+
             <label class="form-label text-white">Efectivo total físico (Todo el día):</label>
             <div class="input-group mb-2">
               <span class="input-group-text bg-secondary text-white border-secondary">$</span>
-              <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="efectivoFisico" placeholder="Billetes y monedas...">
+              <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="efectivoFisico"
+                placeholder="Billetes y monedas...">
             </div>
 
             <label class="form-label text-warning mt-2">¿Cuánto dinero te vas a llevar (Retiro)?</label>
             <div class="input-group mb-3">
               <span class="input-group-text bg-secondary text-white border-secondary">$</span>
-              <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="retiroDueno" placeholder="Tus ganancias...">
+              <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="retiroDueno"
+                placeholder="Tus ganancias...">
             </div>
 
             <div class="alert alert-info py-2" *ngIf="efectivoFisico !== null && retiroDueno !== null">
-              <i class="bi bi-box-arrow-in-right text-dark"></i> <span class="text-dark">Dinero que dejas en caja para mañana: </span>
+              <i class="bi bi-box-arrow-in-right text-dark"></i> <span class="text-dark">Dinero que dejas en caja para
+                mañana: </span>
               <strong class="text-dark">{{ fondoSiguienteDia | currency:'MXN' }}</strong>
             </div>
 

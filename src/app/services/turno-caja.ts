@@ -29,9 +29,4 @@ export class TurnoCaja {
   abrirTurno(datos: {usuarioId: number, efectivoInicial: number}): Observable<any>{
     return this.http.post(`${this.baseUrl}/abrir`, datos);
   }
-
-  cerrarTurno(datos: { turnoId: number, efectivoFinal: number}): Observable<any>{
-    return this.http.put(`${this.baseUrl}/cerrar`, datos);
-  }
-  
 }
